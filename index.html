@@ -24,7 +24,7 @@
         <a href="#founder">Founder</a>
         <a href="#faq">FAQ</a>
       </nav>
-      <a class="button button-secondary compact" href="#download">Baixar grátis</a>
+      <a class="button button-secondary compact" data-download-link href="#download">Baixar grátis</a>
     </div>
   </header>
 
@@ -36,7 +36,7 @@
           <h1>Gravou?<br><span>EditAE.</span></h1>
           <p class="lead">Corte silêncio, erros e vícios de linguagem automaticamente — sem enviar seus vídeos para a nuvem.</p>
           <div class="hero-actions">
-            <a class="button" href="#download">Baixar grátis</a>
+            <a class="button" data-download-link href="#download">Baixar grátis</a>
             <a class="button button-secondary" href="#planos">Ver planos</a>
           </div>
           <div class="trust-row" aria-label="Diferenciais">
@@ -145,7 +145,7 @@
               <li>Revisão das ocorrências</li>
               <li>Exportação MP4</li>
             </ul>
-            <a class="button button-secondary" href="#download">Baixar grátis</a>
+            <a class="button button-secondary" data-download-link href="#download">Baixar grátis</a>
           </article>
 
           <article class="price-card featured">
@@ -206,27 +206,32 @@
           </div>
         </div>
 
+        <div id="commercial-status" class="commercial-status" role="status" hidden>
+          <strong id="commercial-status-title"></strong>
+          <p id="commercial-status-copy"></p>
+        </div>
+
         <div class="founder-grid">
           <article class="founder-card">
             <span class="badge">MENSAL</span>
             <div class="price"><strong>R$29,90</strong><span>/mês</span></div>
             <p>Preço Founder mantido enquanto a assinatura permanecer ativa.</p>
-            <button class="button button-secondary" type="button" disabled>Checkout em breve</button>
+            <a class="button button-secondary" data-checkout-plan="PRO_MONTHLY" href="#founder" aria-disabled="true">Checkout em breve</a>
           </article>
           <article class="founder-card">
             <span class="badge">ANUAL</span>
             <div class="price"><strong>R$249</strong><span>/ano</span></div>
             <p>Renovação no valor Founder enquanto permanecer ativo.</p>
-            <button class="button button-secondary" type="button" disabled>Checkout em breve</button>
+            <a class="button button-secondary" data-checkout-plan="PRO_ANNUAL" href="#founder" aria-disabled="true">Checkout em breve</a>
           </article>
           <article class="founder-card lifetime">
             <span class="badge">100 LICENÇAS</span>
             <div class="price"><strong>R$199</strong></div>
             <p>Pagamento único. Founder Lifetime disponível apenas para as primeiras 100 licenças.</p>
-            <button class="button" type="button" disabled>Founder Lifetime em breve</button>
+            <a class="button" data-checkout-plan="FOUNDER_LIFETIME" href="#founder" aria-disabled="true">Founder Lifetime em breve</a>
           </article>
         </div>
-        <p class="fine-print">A Founder Window será ativada na data oficial de lançamento. O contador exibirá uma data real e não será reiniciado artificialmente.</p>
+        <p class="fine-print" id="founder-note">A Founder Window será ativada na data oficial de lançamento. O contador exibirá uma data real e não será reiniciado artificialmente.</p>
       </div>
     </section>
 
@@ -267,8 +272,8 @@
       <div class="container final-card">
         <span class="eyebrow">GRAVOU? EDITAE.</span>
         <h2>Edite menos o que é repetitivo.<br>Crie mais o que importa.</h2>
-        <p>O download público será liberado no lançamento.</p>
-        <button class="button" type="button" disabled>Download em breve</button>
+        <p id="download-message">O download público será liberado no lançamento.</p>
+        <a id="download-button" class="button" data-download-link href="#download" aria-disabled="true">Download em breve</a>
       </div>
     </section>
   </main>
