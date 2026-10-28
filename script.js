@@ -296,6 +296,21 @@
     startAutomaticCheckout(checkout.dataset.checkoutPlan, checkout);
   });
 
+  async function renderAccountNav() {
+    const link = document.getElementById("account-nav-link");
+    if (!link || !window.EditAEAuth?.configured) return;
+    try {
+      const session = await window.EditAEAuth.session();
+      if (session) {
+        link.textContent = "Minha conta";
+        link.href = "./account/";
+      }
+    } catch (error) {
+      console.warn("EditAE account session unavailable.", error);
+    }
+  }
+
   render(fallbackConfig);
   loadCommercialConfig().then(render);
+  renderAccountNav();
 })();
