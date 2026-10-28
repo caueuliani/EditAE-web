@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex,nofollow,noarchive" />
+  <title>EditAE — Commercial Admin</title>
+  <link rel="icon" href="../brand-mark.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="../styles.css" />
+  <link rel="stylesheet" href="./admin.css" />
+</head>
+<body>
+  <main class="admin-shell">
+    <section class="admin-card">
+      <div class="admin-brand">
+        <img src="../brand-mark.svg" alt="" width="42" height="42" />
+        <div>
+          <span class="eyebrow">EDITAE COMMERCIAL CONTROL</span>
+          <h1>Admin</h1>
+        </div>
+      </div>
+
+      <p class="admin-warning">
+        Este painel não contém credenciais. Toda alteração exige autenticação aceita pelo EditAE.Server.
+      </p>
+
+      <form id="connection-form" class="admin-form">
+        <label>
+          API base URL
+          <input id="api-base" type="url" placeholder="https://api.seudominio.com" required />
+        </label>
+        <label>
+          Token administrativo
+          <input id="admin-token" type="password" autocomplete="off" placeholder="Não é persistido no navegador" required />
+        </label>
+        <div class="admin-actions">
+          <button class="button button-secondary" type="submit">Conectar</button>
+          <button class="button button-secondary" id="disconnect" type="button">Desconectar</button>
+        </div>
+      </form>
+
+      <div id="connection-status" class="admin-status">Não conectado.</div>
+    </section>
+
+    <section class="admin-card" id="commercial-panel" hidden>
+      <div class="admin-heading">
+        <div>
+          <span class="eyebrow">ESTADO COMERCIAL</span>
+          <h2>Operação do site</h2>
+        </div>
+        <button id="refresh" class="button button-secondary compact" type="button">Atualizar</button>
+      </div>
+
+      <form id="commercial-form" class="admin-form admin-grid">
+        <label>
+          Modo
+          <select id="mode" required>
+            <option value="prelaunch">PRELAUNCH</option>
+            <option value="manual">MANUAL</option>
+            <option value="automatic">AUTOMATIC</option>
+          </select>
+        </label>
+
+        <label>
+          Download URL
+          <input id="download-url" type="url" placeholder="https://..." />
+        </label>
+
+        <label>
+          Founder inicia em
+          <input id="founder-starts-at" type="datetime-local" />
+        </label>
+
+        <label>
+          Founder encerra em
+          <input id="founder-ends-at" type="datetime-local" />
+        </label>
+
+        <label>
+          Lifetime restantes
+          <input id="lifetime-remaining" type="number" min="0" max="100" step="1" />
+        </label>
+
+        <label class="check-row">
+          <input id="manual-activation" type="checkbox" />
+          <span>Ativação manual habilitada</span>
+        </label>
+
+        <label>
+          Checkout mensal
+          <input id="checkout-monthly" type="url" placeholder="Usado no modo MANUAL" />
+        </label>
+
+        <label>
+          Checkout anual
+          <input id="checkout-annual" type="url" placeholder="Usado no modo MANUAL" />
+        </label>
+
+        <label>
+          Checkout Lifetime
+          <input id="checkout-lifetime" type="url" placeholder="Usado no modo MANUAL" />
+        </label>
+
+        <div class="admin-actions admin-save">
+          <button class="button" type="submit">Salvar configuração</button>
+        </div>
+      </form>
+
+      <div id="save-status" class="admin-status"></div>
+    </section>
+  </main>
+
+  <script src="./admin.js"></script>
+</body>
+</html>
