@@ -150,3 +150,16 @@ nav a:hover { color: var(--text); }
 @media (max-width: 1100px) { .roadmap-grid-five { grid-template-columns: repeat(3,1fr); } }
 @media (max-width: 900px) { .roadmap-grid-five { grid-template-columns: repeat(2,1fr); } }
 @media (max-width: 620px) { .roadmap-grid-five { grid-template-columns: 1fr; } }
+
+.button.is-disabled,
+.button[aria-disabled="true"] { opacity: .52; cursor: not-allowed; pointer-events: auto; }
+.button.is-loading { opacity: .7; cursor: progress; }
+.commercial-status {
+  margin-top: 28px;
+  border: 1px solid #586447;
+  background: #1a2117;
+  border-radius: 10px;
+  padding: 16px 18px;
+}
+.commercial-status strong { display: block; color: var(--accent); margin-bottom: 4px; }
+.commercial-status p { margin: 0; font-size: 13px; color: #b8c0ae; }
