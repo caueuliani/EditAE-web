@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex,nofollow" />
+  <title>EditAE — Recuperar senha</title>
+  <link rel="icon" href="../../brand-mark.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="../../styles.css" />
+  <link rel="stylesheet" href="../../portal.css" />
+</head>
+<body>
+  <main class="portal-shell">
+    <section class="portal-card">
+      <a class="portal-brand" href="../../">
+        <img src="../../brand-mark.svg" alt="" width="42" height="42" />
+        <div><h1>Recuperar senha</h1><p>Conta EditAE</p></div>
+      </a>
+
+      <form id="request-form" class="portal-form">
+        <label>E-mail<input id="reset-email" type="email" autocomplete="email" required /></label>
+        <button class="button" type="submit">Enviar recuperação</button>
+      </form>
+
+      <form id="update-form" class="portal-form" hidden>
+        <label>Nova senha<input id="new-password" type="password" autocomplete="new-password" minlength="8" required /></label>
+        <label>Confirmar senha<input id="confirm-password" type="password" autocomplete="new-password" minlength="8" required /></label>
+        <button class="button" type="submit">Atualizar senha</button>
+      </form>
+
+      <div id="reset-status" class="portal-status"></div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../../supabase-config.js"></script>
+  <script src="../../supabase-client.js"></script>
+  <script src="./reset.js"></script>
+</body>
+</html>
