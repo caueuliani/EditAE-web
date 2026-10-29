@@ -256,10 +256,23 @@
 
   async function loadCommercialConfig() {
     if (!apiBaseUrl) return fallbackConfig;
+
+    const load = () => fetchJson(apiBaseUrl + "/api/public/config", { method: "GET" });
+
     try {
-      const raw = await fetchJson(apiBaseUrl + "/api/public/config", { method: "GET" });
-      return normalizeConfig(raw);
+      return normalizeConfig(await load());
     } catch (error) {
+      if (error?.name === "AbortError") {
+        console.warn("EditAE commercial config timed out; retrying once.", error);
+        try {
+          await new Promise((resolve) => setTimeout(resolve, 350));
+          return normalizeConfig(await load());
+        } catch (retryError) {
+          console.warn("EditAE commercial config retry failed; safe prelaunch fallback applied.", retryError);
+          return fallbackConfig;
+        }
+      }
+
       console.warn("EditAE commercial config unavailable; safe prelaunch fallback applied.", error);
       return fallbackConfig;
     }
