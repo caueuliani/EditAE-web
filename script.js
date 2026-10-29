@@ -91,21 +91,31 @@
     if (countdownTimer) clearInterval(countdownTimer);
     if (!elements.countdown) return;
 
-    if (!config.founderEndsAt) {
-      elements.countdown.textContent = config.mode === "prelaunch" ? "Em breve" : "Ativa";
-      return;
+    const start = config.founderStartsAt ? new Date(config.founderStartsAt) : null;
+    const end = config.founderEndsAt ? new Date(config.founderEndsAt) : null;
+    const validStart = start && !Number.isNaN(start.getTime()) ? start : null;
+    const validEnd = end && !Number.isNaN(end.getTime()) ? end : null;
+
+    if (!validEnd) {
+      if (validStart && Date.now() < validStart.getTime()) {
+        // Continue below and count down to the opening date.
+      } else {
+        elements.countdown.textContent = config.mode === "prelaunch" ? "Em breve" : "Ativa";
+        return;
+      }
     }
 
-    const end = new Date(config.founderEndsAt);
-    if (Number.isNaN(end.getTime())) {
-      elements.countdown.textContent = "Em breve";
-      return;
-    }
+    const target = validStart && Date.now() < validStart.getTime() ? validStart : validEnd;
+    const prefix = target === validStart ? "Abre em " : "";
 
     const render = () => {
-      const diff = end.getTime() - Date.now();
+      const diff = target.getTime() - Date.now();
       if (diff <= 0) {
-        elements.countdown.textContent = "Encerrada";
+        if (target === validStart) {
+          renderCountdown(config);
+        } else {
+          elements.countdown.textContent = "Encerrada";
+        }
         return false;
       }
 
@@ -114,6 +124,7 @@
       const m = Math.floor((diff % 3600000) / 60000);
       const s = Math.floor((diff % 60000) / 1000);
       elements.countdown.textContent =
+        prefix +
         d + "d " +
         String(h).padStart(2, "0") + "h " +
         String(m).padStart(2, "0") + "m " +
