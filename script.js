@@ -275,6 +275,11 @@
 
     try {
       const session = window.EditAEAuth?.configured ? await window.EditAEAuth.session() : null;
+      if (window.EditAEAuth?.configured && !session) {
+        setStatus("Entre para continuar", "Faça login ou crie sua conta EditAE antes de iniciar a compra.");
+        window.location.assign("./auth/");
+        return;
+      }
       const headers = session?.access_token
         ? { "Authorization": "Bearer " + session.access_token }
         : {};
