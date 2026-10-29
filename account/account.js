@@ -60,7 +60,7 @@
   }
 
   function setAvatarImage(src) {
-    if (currentObjectUrl) {
+    if (currentObjectUrl && src !== currentObjectUrl) {
       URL.revokeObjectURL(currentObjectUrl);
       currentObjectUrl = null;
     }
