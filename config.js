@@ -3,5 +3,5 @@
 // Never place API keys, admin tokens or payment credentials in this public repository.
 window.EDITAE_BOOTSTRAP = {
   apiBaseUrl: null,
-  requestTimeoutMs: 5000
+  requestTimeoutMs: 20000
 };
