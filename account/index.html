@@ -19,6 +19,27 @@
 
       <div id="account-loading" class="portal-status">Carregando sessão…</div>
       <div id="account-content" hidden>
+        <section class="web-profile-avatar">
+          <div id="profile-avatar" class="web-avatar" aria-label="Avatar do perfil">
+            <img id="profile-avatar-image" alt="" hidden />
+            <span id="profile-avatar-initials">E</span>
+          </div>
+          <div>
+            <strong id="profile-avatar-name">Perfil EditAE</strong>
+            <button class="portal-link-button" id="toggle-avatar-editor" type="button">Alterar avatar</button>
+          </div>
+        </section>
+
+        <section id="avatar-editor" class="web-avatar-editor" hidden>
+          <div id="avatar-presets" class="web-avatar-grid"></div>
+          <div class="portal-actions">
+            <button class="button button-secondary compact" id="avatar-initials" type="button">Usar iniciais</button>
+            <label class="button compact" for="avatar-upload">Enviar foto</label>
+            <input id="avatar-upload" type="file" accept="image/png,image/jpeg,image/webp" hidden />
+          </div>
+          <p id="avatar-status" class="portal-muted">PNG, JPEG ou WebP de até 2 MB.</p>
+        </section>
+
         <div class="account-grid">
           <div class="account-box"><small>Nome</small><strong id="account-name">—</strong></div>
           <div class="account-box"><small>E-mail</small><strong id="account-email">—</strong></div>
