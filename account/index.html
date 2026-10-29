@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex,nofollow" />
+  <title>EditAE — Minha conta</title>
+  <link rel="icon" href="../brand-mark.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="../styles.css" />
+  <link rel="stylesheet" href="../portal.css" />
+</head>
+<body>
+  <main class="portal-shell">
+    <section class="portal-card">
+      <a class="portal-brand" href="../">
+        <img src="../brand-mark.svg" alt="" width="42" height="42" />
+        <div><h1>Minha conta</h1><p>EditAE</p></div>
+      </a>
+
+      <div id="account-loading" class="portal-status">Carregando sessão…</div>
+      <div id="account-content" hidden>
+        <div class="account-grid">
+          <div class="account-box"><small>Nome</small><strong id="account-name">—</strong></div>
+          <div class="account-box"><small>E-mail</small><strong id="account-email">—</strong></div>
+          <div class="account-box"><small>Plano</small><strong id="account-plan">—</strong></div>
+          <div class="account-box"><small>Licença</small><strong id="account-license">—</strong></div>
+          <div class="account-box"><small>Dispositivos</small><strong id="account-devices">—</strong></div>
+          <div class="account-box"><small>Assinatura</small><strong id="account-subscription">—</strong></div>
+        </div>
+
+        <p id="account-server-status" class="portal-muted">Consultando sua conta comercial no EditAE.Server…</p>
+
+        <div class="portal-actions">
+          <a class="button button-secondary" href="../">Voltar ao EditAE</a>
+          <button class="button" id="logout" type="button">Sair</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../supabase-config.js"></script>
+  <script src="../supabase-client.js"></script>
+  <script src="../config.js"></script>
+  <script src="./account.js"></script>
+</body>
+</html>

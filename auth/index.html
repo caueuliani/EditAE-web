@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex,nofollow" />
+  <title>EditAE — Entrar</title>
+  <link rel="icon" href="../brand-mark.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="../styles.css" />
+  <link rel="stylesheet" href="../portal.css" />
+</head>
+<body>
+  <main class="portal-shell">
+    <section class="portal-card">
+      <a class="portal-brand" href="../">
+        <img src="../brand-mark.svg" alt="" width="42" height="42" />
+        <div><h1>EditAE</h1><p>Conta EditAE</p></div>
+      </a>
+
+      <div id="not-configured" class="admin-warning" hidden>
+        Supabase ainda não foi configurado para este ambiente.
+      </div>
+
+      <div class="portal-tabs">
+        <button class="portal-tab active" id="tab-login" type="button">Entrar</button>
+        <button class="portal-tab" id="tab-signup" type="button">Criar conta</button>
+      </div>
+
+      <form id="login-form" class="portal-form">
+        <label>E-mail<input id="login-email" type="email" autocomplete="email" required /></label>
+        <label>Senha<input id="login-password" type="password" autocomplete="current-password" required /></label>
+        <div class="portal-actions">
+          <button class="button" type="submit">Entrar</button>
+          <a class="button button-secondary" href="./reset/">Esqueci minha senha</a>
+        </div>
+      </form>
+
+      <form id="signup-form" class="portal-form" hidden>
+        <label>Nome<input id="signup-name" type="text" autocomplete="name" minlength="2" maxlength="80" required /></label>
+        <label>E-mail<input id="signup-email" type="email" autocomplete="email" required /></label>
+        <label>Senha<input id="signup-password" type="password" autocomplete="new-password" minlength="8" required /></label>
+        <label>Confirmar senha<input id="signup-confirm" type="password" autocomplete="new-password" minlength="8" required /></label>
+        <div class="portal-actions">
+          <button class="button" type="submit">Criar conta</button>
+        </div>
+      </form>
+
+      <div id="auth-status" class="portal-status"></div>
+      <p class="portal-muted">Ao criar sua conta, você poderá vincular licenças, dispositivos e compras do EditAE futuramente.</p>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../supabase-config.js"></script>
+  <script src="../supabase-client.js"></script>
+  <script src="./auth.js"></script>
+</body>
+</html>

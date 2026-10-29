@@ -1,0 +1,71 @@
+[hidden] { display: none !important; }
+.portal-shell {
+  width: min(760px, calc(100% - 32px));
+  margin: 58px auto;
+}
+.portal-card {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  border-radius: 14px;
+  padding: 30px;
+}
+.portal-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 26px;
+}
+.portal-brand h1 { margin: 0; font-size: 34px; letter-spacing: -1.5px; }
+.portal-brand p { margin: 4px 0 0; font-size: 13px; }
+.portal-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 22px;
+}
+.portal-tab {
+  border: 1px solid var(--border);
+  background: #15181d;
+  color: #b9c0ca;
+  border-radius: 7px;
+  padding: 10px 14px;
+  cursor: pointer;
+}
+.portal-tab.active {
+  border-color: #64784a;
+  background: #20271c;
+  color: var(--accent);
+}
+.portal-form {
+  display: grid;
+  gap: 15px;
+}
+.portal-form label {
+  display: grid;
+  gap: 7px;
+  font-size: 12px;
+  color: #c1c6ce;
+  font-weight: 600;
+}
+.portal-form input {
+  min-height: 46px;
+  padding: 10px 12px;
+  border-radius: 7px;
+  border: 1px solid var(--border-strong);
+  background: #111419;
+  color: var(--text);
+  font: inherit;
+}
+.portal-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
+.portal-status { min-height: 21px; margin-top: 15px; color: var(--muted); font-size: 13px; }
+.portal-status.ok { color: var(--accent); }
+.portal-status.error { color: #f2a1a1; }
+.portal-muted { color: var(--muted); font-size: 13px; }
+.portal-link { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+.account-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; margin: 24px 0; }
+.account-box { border: 1px solid var(--border); background: #14171c; border-radius: 9px; padding: 16px; }
+.account-box small { display:block; color: var(--muted); margin-bottom: 7px; }
+.account-box strong { overflow-wrap:anywhere; }
+@media (max-width: 620px) {
+  .portal-card { padding: 22px; }
+  .account-grid { grid-template-columns: 1fr; }
+}
