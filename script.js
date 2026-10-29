@@ -274,8 +274,13 @@
     link.textContent = "Abrindo checkout…";
 
     try {
+      const session = window.EditAEAuth?.configured ? await window.EditAEAuth.session() : null;
+      const headers = session?.access_token
+        ? { "Authorization": "Bearer " + session.access_token }
+        : {};
       const result = await fetchJson(apiBaseUrl + "/api/checkout", {
         method: "POST",
+        headers,
         body: JSON.stringify({ plan })
       });
 
