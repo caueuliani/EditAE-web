@@ -22,11 +22,13 @@
         <div class="account-grid">
           <div class="account-box"><small>Nome</small><strong id="account-name">—</strong></div>
           <div class="account-box"><small>E-mail</small><strong id="account-email">—</strong></div>
-          <div class="account-box"><small>Plano</small><strong>Free</strong></div>
-          <div class="account-box"><small>Licença</small><strong>Ainda não vinculada</strong></div>
+          <div class="account-box"><small>Plano</small><strong id="account-plan">—</strong></div>
+          <div class="account-box"><small>Licença</small><strong id="account-license">—</strong></div>
+          <div class="account-box"><small>Dispositivos</small><strong id="account-devices">—</strong></div>
+          <div class="account-box"><small>Assinatura</small><strong id="account-subscription">—</strong></div>
         </div>
 
-        <p class="portal-muted">Licenças, dispositivos, assinatura e histórico de pagamentos serão conectados ao EditAE.Server nas próximas etapas.</p>
+        <p id="account-server-status" class="portal-muted">Consultando sua conta comercial no EditAE.Server…</p>
 
         <div class="portal-actions">
           <a class="button button-secondary" href="../">Voltar ao EditAE</a>
@@ -39,6 +41,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="../supabase-config.js"></script>
   <script src="../supabase-client.js"></script>
+  <script src="../config.js"></script>
   <script src="./account.js"></script>
 </body>
 </html>
