@@ -163,3 +163,10 @@ nav a:hover { color: var(--text); }
 }
 .commercial-status strong { display: block; color: var(--accent); margin-bottom: 4px; }
 .commercial-status p { margin: 0; font-size: 13px; color: #b8c0ae; }
+
+/* Coupon checkout is intentionally hidden until the server enables safe checkout. */
+.coupon-checkout-panel { max-width: 560px; margin: 0 0 26px; }
+.coupon-checkout-panel[hidden] { display: none !important; }
+.coupon-checkout-panel label { display:block; font-weight:600; margin-bottom:10px; }
+.coupon-checkout-panel input { width:100%; padding:12px 14px; background:var(--surface); color:inherit; border:1px solid var(--border-strong); border-radius:8px; }
+.coupon-checkout-panel p { font-size:13px; margin-top:8px; color:var(--muted); }

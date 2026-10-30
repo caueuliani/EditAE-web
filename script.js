@@ -166,6 +166,20 @@
     return null;
   }
 
+  // Keep coupon UI hidden until backend subscription pricing is homologated.
+  // Do not enable without server readiness and an explicit public capability flag.
+  const couponUiEnabled = false;
+  const couponPanel = document.getElementById("coupon-checkout-panel");
+  if (couponPanel) couponPanel.hidden = !couponUiEnabled;
+
+  function checkoutCouponCode(plan) {
+    if (!couponUiEnabled || plan !== "FOUNDER_LIFETIME") return null;
+    const value = document.getElementById("checkout-coupon-code")?.value.trim().toUpperCase() || "";
+    if (!value) return null;
+    if (!/^[A-Z0-9_-]{3,32}$/.test(value)) throw new Error("invalid_coupon_format");
+    return value;
+  }
+
   function renderCheckout(config) {
     document.querySelectorAll("[data-checkout-plan]").forEach((link) => {
       const plan = link.dataset.checkoutPlan;
@@ -296,10 +310,11 @@
       const headers = session?.access_token
         ? { "Authorization": "Bearer " + session.access_token }
         : {};
+      const couponCode = checkoutCouponCode(plan);
       const result = await fetchJson(apiBaseUrl + "/api/checkout", {
         method: "POST",
         headers,
-        body: JSON.stringify({ plan })
+        body: JSON.stringify({ plan, ...(couponCode ? { couponCode } : {}) })
       });
 
       const checkoutUrl = result?.checkoutUrl || result?.url;
@@ -307,6 +322,13 @@
       window.location.assign(checkoutUrl);
     } catch (error) {
       console.error("Não foi possível iniciar o checkout.", error);
+      if (error?.message === "invalid_coupon_format") {
+        setStatus("Cupom inválido", "Use de 3 a 32 caracteres: letras, números, _ ou -.");
+        link.textContent = original;
+        link.removeAttribute("aria-disabled");
+        link.classList.remove("is-loading");
+        return;
+      }
       setStatus(
         "Checkout temporariamente indisponível",
         "O download gratuito continua disponível. Tente novamente em alguns instantes."

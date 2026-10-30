@@ -130,6 +130,14 @@
         <span class="eyebrow">FREE VS PRO</span>
         <h2>Comece grátis. Evolua quando fizer sentido.</h2>
 
+        <div id="coupon-checkout-panel" class="coupon-checkout-panel" hidden>
+          <label for="checkout-coupon-code">Cupom de desconto</label>
+          <div class="coupon-checkout-row">
+            <input id="checkout-coupon-code" type="text" maxlength="32" pattern="[A-Za-z0-9_-]{3,32}"
+              autocomplete="off" placeholder="Digite seu cupom" aria-describedby="coupon-checkout-help" />
+          </div>
+          <p id="coupon-checkout-help">O desconto será calculado e confirmado pelo servidor antes de abrir o Asaas. Cupons não são aplicáveis às renovações.</p>
+        </div>
         <div class="pricing-grid">
           <article class="price-card">
             <div>
