@@ -127,8 +127,11 @@
         <label>Desconto
           <input id="coupon-value" type="number" min="0.01" step="0.01" required />
         </label>
-        <label>Limite de utilizações (opcional)
-          <input id="coupon-limit" type="number" min="1" step="1" placeholder="Sem limite" />
+        <label>Limite global de utilizações (opcional)
+          <input id="coupon-limit" type="number" min="1" step="1" placeholder="Sem limite global" />
+        </label>
+        <label>Limite por conta (opcional)
+          <input id="coupon-account-limit" type="number" min="1" step="1" value="1" placeholder="Sem limite por conta" />
         </label>
         <label>Início (opcional)
           <input id="coupon-start" type="datetime-local" />
