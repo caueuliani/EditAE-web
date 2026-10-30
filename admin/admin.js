@@ -5,6 +5,7 @@
   const connectionForm = $("connection-form");
   const commercialForm = $("commercial-form");
   const panel = $("commercial-panel");
+  const couponsPanel = $("coupons-panel");
   const connectionStatus = $("connection-status");
   const saveStatus = $("save-status");
 
@@ -100,6 +101,8 @@
     const config = await request("/api/admin/config");
     populate(config);
     panel.hidden = false;
+    couponsPanel.hidden = false;
+    await loadCoupons();
     setStatus(connectionStatus, "Conectado ao EditAE.Server.", "ok");
   }
 
@@ -115,6 +118,8 @@
     } catch (error) {
       token = "";
       panel.hidden = true;
+    couponsPanel.hidden = true;
+      couponsPanel.hidden = true;
       setStatus(connectionStatus, error.message, "error");
     }
   });
@@ -148,6 +153,84 @@
       setStatus(saveStatus, "Configuração salva.", "ok");
     } catch (error) {
       setStatus(saveStatus, error.message, "error");
+    }
+  });
+
+  function couponSummary(coupon) {
+    const amount = coupon.type === "percent"
+      ? coupon.value + "%"
+      : (coupon.value / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+    const dates = [coupon.startsAt ? "Início: " + toLocalInput(coupon.startsAt).replace("T", " ") : null,
+      coupon.endsAt ? "Fim: " + toLocalInput(coupon.endsAt).replace("T", " ") : null].filter(Boolean).join(" • ");
+    return amount + " • " + (coupon.plans || []).join(", ") + " • Usos: " +
+      coupon.usageCount + "/" + (coupon.usageLimit ?? "∞") + (dates ? " • " + dates : "");
+  }
+
+  async function loadCoupons() {
+    const list = $("coupon-list");
+    list.replaceChildren();
+    const coupons = await request("/api/admin/coupons");
+    if (!coupons.length) {
+      list.textContent = "Nenhum cupom cadastrado.";
+      return;
+    }
+    coupons.forEach((coupon) => {
+      const item = document.createElement("div");
+      item.className = "coupon-item";
+      const details = document.createElement("div");
+      const name = document.createElement("strong");
+      name.textContent = coupon.code + (coupon.active ? " • Ativo" : " • Desativado");
+      const summary = document.createElement("small");
+      summary.textContent = couponSummary(coupon);
+      details.append(name, summary);
+      const toggle = document.createElement("button");
+      toggle.type = "button";
+      toggle.className = "button button-secondary compact";
+      toggle.textContent = coupon.active ? "Desativar" : "Ativar";
+      toggle.addEventListener("click", async () => {
+        toggle.disabled = true;
+        try {
+          await request("/api/admin/coupons/" + encodeURIComponent(coupon.code) + "/activation", {
+            method: "PUT", body: JSON.stringify({ active: !coupon.active })
+          });
+          await loadCoupons();
+          setStatus($("coupon-status"), "Status do cupom atualizado.", "ok");
+        } catch (error) {
+          setStatus($("coupon-status"), error.message, "error");
+        } finally { toggle.disabled = false; }
+      });
+      item.append(details, toggle);
+      list.append(item);
+    });
+  }
+
+  $("refresh-coupons").addEventListener("click", async () => {
+    try { await loadCoupons(); setStatus($("coupon-status"), "Lista atualizada.", "ok"); }
+    catch (error) { setStatus($("coupon-status"), error.message, "error"); }
+  });
+
+  $("coupon-form").addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const type = $("coupon-type").value;
+    const input = Number($("coupon-value").value);
+    const value = type === "fixed" ? Math.round(input * 100) : input;
+    const plans = Array.from(document.querySelectorAll('[name="coupon-plan"]:checked')).map(el => el.value);
+    if (!plans.length || !Number.isInteger(value) || value <= 0) {
+      setStatus($("coupon-status"), "Selecione um plano e informe um desconto válido (percentual inteiro).", "error");
+      return;
+    }
+    try {
+      await request("/api/admin/coupons", { method: "POST", body: JSON.stringify({
+        code: $("coupon-code").value.trim().toUpperCase(), type, value, plans,
+        startsAt: toIsoOrNull($("coupon-start").value),
+        endsAt: toIsoOrNull($("coupon-end").value),
+        usageLimit: $("coupon-limit").value ? Number($("coupon-limit").value) : null
+      }) });
+      $("coupon-form").reset();
+      await loadCoupons();
+      setStatus($("coupon-status"), "Cupom criado.", "ok");
+    } catch (error) {
+      setStatus($("coupon-status"), error.message, "error");
     }
   });
 })();
