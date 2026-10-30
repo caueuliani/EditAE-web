@@ -60,13 +60,10 @@
   }
 
   function validAvatarPath(path, userId) {
+    const prefix = String(userId || "") + "/profile.";
     return typeof path === "string"
-      && path.length > 0
       && path.length <= 256
-      && !path.startsWith("/")
-      && !path.includes("..")
-      && /^[A-Za-z0-9/_.-]+$/.test(path)
-      && path.startsWith(String(userId || "") + "/");
+      && ["png", "jpg", "webp"].some((extension) => path === prefix + extension);
   }
 
   function setAvatarImage(src) {
