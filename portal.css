@@ -69,3 +69,17 @@
   .portal-card { padding: 22px; }
   .account-grid { grid-template-columns: 1fr; }
 }
+
+.web-profile-avatar { display:flex; align-items:center; gap:14px; padding:14px; border:1px solid var(--border); background:#14171c; border-radius:10px; margin-bottom:14px; }
+.web-profile-avatar > div:last-child { display:grid; gap:5px; }
+.web-avatar { width:64px; height:64px; border-radius:50%; border:2px solid #aab1bc; background:#23272e; display:grid; place-items:center; overflow:hidden; font-weight:800; color:#e8e9ee; }
+.web-avatar.pro { border-color:#c7aa68; }
+.web-avatar img { width:100%; height:100%; object-fit:cover; display:block; }
+.portal-link-button { border:0; background:transparent; color:var(--accent); padding:0; text-align:left; cursor:pointer; font:inherit; font-size:12px; }
+.web-avatar-editor { border:1px solid var(--border); background:#111419; border-radius:10px; padding:14px; margin-bottom:18px; }
+.web-avatar-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; }
+.web-avatar-option { border:1px solid var(--border-strong); background:#191c22; color:#bfc6d0; border-radius:8px; padding:9px; display:grid; gap:6px; justify-items:center; cursor:pointer; }
+.web-avatar-option.selected { border-color:var(--accent); background:#20271c; color:var(--accent); }
+.web-avatar-option img { width:54px; height:54px; border-radius:50%; }
+.web-avatar-option span { font-size:11px; }
+@media (max-width:620px) { .web-avatar-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
