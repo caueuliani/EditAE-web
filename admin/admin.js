@@ -102,7 +102,8 @@
     populate(config);
     panel.hidden = false;
     couponsPanel.hidden = false;
-    await loadCoupons();
+    try { await loadCoupons(); }
+    catch (error) { setStatus($("coupon-status"), error.message, "error"); }
     setStatus(connectionStatus, "Conectado ao EditAE.Server.", "ok");
   }
 
@@ -118,7 +119,6 @@
     } catch (error) {
       token = "";
       panel.hidden = true;
-    couponsPanel.hidden = true;
       couponsPanel.hidden = true;
       setStatus(connectionStatus, error.message, "error");
     }
@@ -127,6 +127,7 @@
   $("disconnect").addEventListener("click", () => {
     token = "";
     panel.hidden = true;
+    couponsPanel.hidden = true;
     $("admin-token").value = "";
     setStatus(connectionStatus, "Desconectado.");
   });
