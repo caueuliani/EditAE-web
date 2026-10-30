@@ -59,6 +59,16 @@
     return presets.find(([preset]) => preset === id)?.[2] || null;
   }
 
+  function validAvatarPath(path, userId) {
+    return typeof path === "string"
+      && path.length > 0
+      && path.length <= 256
+      && !path.startsWith("/")
+      && !path.includes("..")
+      && /^[A-Za-z0-9/_\\-.]+$/.test(path)
+      && path.startsWith(String(userId || "") + "/");
+  }
+
   function setAvatarImage(src) {
     if (currentObjectUrl && src !== currentObjectUrl) {
       URL.revokeObjectURL(currentObjectUrl);
@@ -92,7 +102,7 @@
       return;
     }
 
-    if (mode === "upload" && metadata.avatar_path) {
+    if (mode === "upload" && validAvatarPath(metadata.avatar_path, currentUser?.id)) {
       const { data, error } = await currentClient.storage.from("avatars").download(metadata.avatar_path);
       if (!error && data) {
         currentObjectUrl = URL.createObjectURL(data);
@@ -284,8 +294,13 @@
       }
 
       document.getElementById("logout").addEventListener("click", async () => {
-        await client.auth.signOut();
-        window.location.href = "../";
+        try {
+          const { error } = await client.auth.signOut({ scope: "local" });
+          if (error) throw error;
+          window.location.href = "../";
+        } catch (error) {
+          commercialStatus.textContent = error.message || "Não foi possível encerrar esta sessão.";
+        }
       });
     } catch (error) {
       loading.textContent = error.message || "Não foi possível carregar sua conta.";
