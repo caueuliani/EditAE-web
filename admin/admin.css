@@ -84,3 +84,13 @@
   .admin-save { grid-column: auto; }
   .admin-heading { align-items: flex-start; }
 }
+
+.admin-note { color: var(--muted); font-size: 13px; line-height: 1.5; }
+.coupon-plans { grid-column: 1 / -1; border: 1px solid var(--border); border-radius: 8px; padding: 12px; display: flex; flex-wrap: wrap; gap: 18px; }
+.coupon-plans legend { color: var(--muted); font-size: 12px; }
+.coupon-plans label { display: flex; gap: 8px; align-items: center; }
+.coupon-plans input { width: auto; min-height: auto; }
+.coupon-list { display: grid; gap: 10px; margin-top: 18px; }
+.coupon-item { padding: 14px; border: 1px solid var(--border); border-radius: 9px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.coupon-item strong { font-size: 15px; }
+.coupon-item small { display: block; margin-top: 5px; color: var(--muted); line-height: 1.5; }
