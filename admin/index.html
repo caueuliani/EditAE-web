@@ -108,6 +108,45 @@
 
       <div id="save-status" class="admin-status"></div>
     </section>
+    <section class="admin-card" id="coupons-panel" hidden>
+      <div class="admin-heading">
+        <div>
+          <span class="eyebrow">PROMOÇÕES</span>
+          <h2>Cupons de desconto</h2>
+        </div>
+        <button id="refresh-coupons" class="button button-secondary compact" type="button">Atualizar</button>
+      </div>
+      <p class="admin-note">Cadastre e habilite cupons. O desconto no checkout será liberado em uma etapa separada.</p>
+      <form id="coupon-form" class="admin-form admin-grid">
+        <label>Código do cupom
+          <input id="coupon-code" maxlength="32" minlength="3" pattern="[A-Za-z0-9_-]{3,32}" placeholder="EDITAE20" required />
+        </label>
+        <label>Tipo
+          <select id="coupon-type"><option value="percent">Percentual (%)</option><option value="fixed">Valor fixo (R$)</option></select>
+        </label>
+        <label>Desconto
+          <input id="coupon-value" type="number" min="0.01" step="0.01" required />
+        </label>
+        <label>Limite de utilizações (opcional)
+          <input id="coupon-limit" type="number" min="1" step="1" placeholder="Sem limite" />
+        </label>
+        <label>Início (opcional)
+          <input id="coupon-start" type="datetime-local" />
+        </label>
+        <label>Fim (opcional)
+          <input id="coupon-end" type="datetime-local" />
+        </label>
+        <fieldset class="coupon-plans">
+          <legend>Planos elegíveis</legend>
+          <label><input type="checkbox" name="coupon-plan" value="PRO_MONTHLY" checked /> Mensal</label>
+          <label><input type="checkbox" name="coupon-plan" value="PRO_ANNUAL" checked /> Anual</label>
+          <label><input type="checkbox" name="coupon-plan" value="FOUNDER_LIFETIME" /> Lifetime</label>
+        </fieldset>
+        <div class="admin-actions admin-save"><button class="button" type="submit">Criar cupom</button></div>
+      </form>
+      <div id="coupon-status" class="admin-status" role="status"></div>
+      <div class="coupon-list" id="coupon-list"></div>
+    </section>
   </main>
 
   <script src="./admin.js"></script>
