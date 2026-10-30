@@ -164,7 +164,7 @@
     const dates = [coupon.startsAt ? "Início: " + toLocalInput(coupon.startsAt).replace("T", " ") : null,
       coupon.endsAt ? "Fim: " + toLocalInput(coupon.endsAt).replace("T", " ") : null].filter(Boolean).join(" • ");
     return amount + " • " + (coupon.plans || []).join(", ") + " • Usos: " +
-      coupon.usageCount + "/" + (coupon.usageLimit ?? "∞") + (dates ? " • " + dates : "");
+      (coupon.usageCount ?? 0) + "/" + (coupon.usageLimit ?? "∞") + (dates ? " • " + dates : "");
   }
 
   async function loadCoupons() {
