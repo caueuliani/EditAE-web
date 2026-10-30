@@ -161,10 +161,11 @@
     const amount = coupon.type === "percent"
       ? coupon.value + "%"
       : (coupon.value / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
-    const dates = [coupon.startsAt ? "Início: " + toLocalInput(coupon.startsAt).replace("T", " ") : null,
-      coupon.endsAt ? "Fim: " + toLocalInput(coupon.endsAt).replace("T", " ") : null].filter(Boolean).join(" • ");
+    const dates = [(coupon.starts_at ?? coupon.startsAt) ? "Início: " + toLocalInput(coupon.starts_at ?? coupon.startsAt).replace("T", " ") : null,
+      (coupon.ends_at ?? coupon.endsAt) ? "Fim: " + toLocalInput(coupon.ends_at ?? coupon.endsAt).replace("T", " ") : null].filter(Boolean).join(" • ");
     return amount + " • " + (coupon.plans || []).join(", ") + " • Usos: " +
-      (coupon.usageCount ?? 0) + "/" + (coupon.usageLimit ?? "∞") + (dates ? " • " + dates : "");
+      (coupon.usage_count ?? coupon.usageCount ?? 0) + "/" + (coupon.usage_limit ?? coupon.usageLimit ?? "∞") +
+      " • Por conta: " + (coupon.per_account_limit ?? coupon.perAccountLimit ?? "∞") + (dates ? " • " + dates : "");
   }
 
   async function loadCoupons() {
@@ -223,9 +224,10 @@
     try {
       await request("/api/admin/coupons", { method: "POST", body: JSON.stringify({
         code: $("coupon-code").value.trim().toUpperCase(), type, value, plans,
-        startsAt: toIsoOrNull($("coupon-start").value),
-        endsAt: toIsoOrNull($("coupon-end").value),
-        usageLimit: $("coupon-limit").value ? Number($("coupon-limit").value) : null
+        starts_at: toIsoOrNull($("coupon-start").value),
+        ends_at: toIsoOrNull($("coupon-end").value),
+        usage_limit: $("coupon-limit").value ? Number($("coupon-limit").value) : null,
+        per_account_limit: $("coupon-account-limit").value ? Number($("coupon-account-limit").value) : null
       }) });
       $("coupon-form").reset();
       await loadCoupons();
