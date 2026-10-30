@@ -65,7 +65,7 @@
       && path.length <= 256
       && !path.startsWith("/")
       && !path.includes("..")
-      && /^[A-Za-z0-9/_\\-.]+$/.test(path)
+      && /^[A-Za-z0-9/_.-]+$/.test(path)
       && path.startsWith(String(userId || "") + "/");
   }
 
