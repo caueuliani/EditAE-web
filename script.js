@@ -309,6 +309,42 @@
     }
   }
 
+  async function startAssistedSales(plan, link) {
+    if (activeConfig.mode !== "manual" || !apiBaseUrl) return;
+    const original = link.textContent;
+    link.setAttribute("aria-disabled", "true");
+    link.classList.add("is-loading");
+    link.textContent = "Gerando código…";
+    try {
+      const session = await window.EditAEAuth?.session?.();
+      if (!session?.access_token) {
+        sessionStorage.setItem("editae_pending_sales_plan", plan);
+        setStatus("Entre para continuar", "Faça login ou crie sua conta EditAE para gerar o código de atendimento.");
+        window.location.assign("./auth/");
+        return;
+      }
+      const result = await fetchJson(apiBaseUrl + "/api/account/sales-requests", {
+        method: "POST",
+        headers: { Authorization: "Bearer " + session.access_token },
+        body: JSON.stringify({ plan })
+      });
+      if (!result?.code) throw new Error("Código de atendimento não retornado.");
+      const message = planMessages[plan] + "\n\nCódigo de verificação EditAE: " + result.code +
+        "\nVálido por 30 minutos. Aguarde a confirmação do atendimento.";
+      const url = "https://wa.me/" + salesWhatsapp + "?text=" + encodeURIComponent(message);
+      setStatus("Código criado", "O código expira em 30 minutos. Se o WhatsApp não abrir, clique novamente para gerar outro.");
+      // Same-tab navigation avoids popup blockers after an asynchronous request.
+      window.location.assign(url);
+    } catch (error) {
+      console.error("Falha ao iniciar atendimento EditAE.", error);
+      setStatus("Atendimento indisponível", "Não foi possível gerar seu código. Confira sua sessão e tente novamente.");
+    } finally {
+      link.textContent = original;
+      link.removeAttribute("aria-disabled");
+      link.classList.remove("is-loading");
+    }
+  }
+
   async function startAutomaticCheckout(plan, link) {
     if (activeConfig.mode !== "automatic" || !apiBaseUrl) return;
 
