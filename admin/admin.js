@@ -122,7 +122,6 @@
       token = "";
       panel.hidden = true;
       couponsPanel.hidden = true;
-    salesPanel.hidden = true;
       salesPanel.hidden = true;
       setStatus(connectionStatus, error.message, "error");
     }
