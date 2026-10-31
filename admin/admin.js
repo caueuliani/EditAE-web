@@ -6,6 +6,7 @@
   const commercialForm = $("commercial-form");
   const panel = $("commercial-panel");
   const couponsPanel = $("coupons-panel");
+  const salesPanel = $("sales-panel");
   const connectionStatus = $("connection-status");
   const saveStatus = $("save-status");
 
@@ -102,6 +103,7 @@
     populate(config);
     panel.hidden = false;
     couponsPanel.hidden = false;
+    salesPanel.hidden = false;
     try { await loadCoupons(); }
     catch (error) { setStatus($("coupon-status"), error.message, "error"); }
     setStatus(connectionStatus, "Conectado ao EditAE.Server.", "ok");
@@ -120,6 +122,8 @@
       token = "";
       panel.hidden = true;
       couponsPanel.hidden = true;
+    salesPanel.hidden = true;
+      salesPanel.hidden = true;
       setStatus(connectionStatus, error.message, "error");
     }
   });
@@ -128,6 +132,7 @@
     token = "";
     panel.hidden = true;
     couponsPanel.hidden = true;
+    salesPanel.hidden = true;
     $("admin-token").value = "";
     setStatus(connectionStatus, "Desconectado.");
   });
@@ -154,6 +159,30 @@
       setStatus(saveStatus, "Configuração salva.", "ok");
     } catch (error) {
       setStatus(saveStatus, error.message, "error");
+    }
+  });
+
+  $("sales-form").addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const code = $("sales-code").value.trim().toUpperCase();
+    const resultBox = $("sales-result");
+    resultBox.hidden = true;
+    setStatus($("sales-status"), "Validando código…");
+    try {
+      const result = await request("/api/admin/sales-requests/resolve", {
+        method: "POST", body: JSON.stringify({ code })
+      });
+      const date = new Date(result.verifiedAt * 1000).toLocaleString("pt-BR");
+      resultBox.textContent = "Pedido: " + result.requestId + "\nConta: " +
+        (result.email || "Sem e-mail") + "\nID da conta: " + result.userId +
+        "\nPlano: " + result.plan + "\nValidado em: " + date +
+        "\nPagamento: NÃO CONFIRMADO. Licença: NÃO CONCEDIDA.";
+      resultBox.style.whiteSpace = "pre-line";
+      resultBox.hidden = false;
+      $("sales-code").value = "";
+      setStatus($("sales-status"), "Código consumido e pedido vinculado. Confirme o pagamento separadamente.", "ok");
+    } catch (error) {
+      setStatus($("sales-status"), error.message, "error");
     }
   });
 
