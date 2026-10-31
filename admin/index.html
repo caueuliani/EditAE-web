@@ -108,6 +108,18 @@
 
       <div id="save-status" class="admin-status"></div>
     </section>
+    <section class="admin-card" id="sales-panel" hidden>
+      <div class="admin-heading"><div><span class="eyebrow">ATENDIMENTO ASSISTIDO</span><h2>Validar código do WhatsApp</h2></div></div>
+      <p class="admin-note">O código expira em 30 minutos e só pode ser validado uma vez. A consulta vincula o pedido à conta autenticada, mas não confirma pagamento nem concede licença.</p>
+      <form id="sales-form" class="admin-form">
+        <label>Código recebido no WhatsApp
+          <input id="sales-code" type="text" maxlength="40" placeholder="EA-XXXXXXXX-XXXXXXXX-XXXXXXXX" autocomplete="off" required />
+        </label>
+        <div class="admin-actions"><button class="button" type="submit">Validar e vincular pedido</button></div>
+      </form>
+      <div id="sales-status" class="admin-status" role="status"></div>
+      <div id="sales-result" class="admin-status" hidden></div>
+    </section>
     <section class="admin-card" id="coupons-panel" hidden>
       <div class="admin-heading">
         <div>
