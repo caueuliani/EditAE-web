@@ -159,6 +159,19 @@
     }
   }
 
+  // Atendimento comercial assistido: sem checkout automático ou captura de cartão no site.
+  const salesWhatsapp = "5519996226692";
+  const planMessages = {
+    PRO_MONTHLY: "Olá! Quero assinar o EditAE Pro Founder mensal (R$ 29,90/mês). Como faço para pagar pelo Asaas e ativar minha licença?",
+    PRO_ANNUAL: "Olá! Quero assinar o EditAE Pro Founder anual (R$ 249/ano). Como faço para pagar pelo Asaas e ativar minha licença?",
+    FOUNDER_LIFETIME: "Olá! Tenho interesse na licença EditAE Founder Lifetime (R$ 199). Ainda há licenças disponíveis? Como faço para comprar pelo Asaas?"
+  };
+
+  function assistedSalesUrl(plan) {
+    const message = planMessages[plan];
+    return message ? "https://wa.me/" + salesWhatsapp + "?text=" + encodeURIComponent(message) : null;
+  }
+
   function planUrl(config, plan) {
     if (plan === "PRO_MONTHLY") return config.checkout.monthly;
     if (plan === "PRO_ANNUAL") return config.checkout.annual;
@@ -194,13 +207,17 @@
       }
 
       if (config.mode === "manual") {
-        const url = planUrl(config, plan);
+        const url = assistedSalesUrl(plan);
         const label = plan === "PRO_MONTHLY"
-          ? "Assinar Founder"
+          ? "Assinar mensal pelo WhatsApp"
           : plan === "PRO_ANNUAL"
-            ? "Assinar Founder anual"
-            : "Garantir Founder Lifetime";
+            ? "Assinar anual pelo WhatsApp"
+            : "Solicitar Lifetime pelo WhatsApp";
         setLinkState(link, Boolean(url), url, label);
+        if (url) {
+          link.target = "_blank";
+          link.rel = "noopener noreferrer";
+        }
         return;
       }
 
