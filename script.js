@@ -162,9 +162,9 @@
   // Atendimento comercial assistido: sem checkout automático ou captura de cartão no site.
   const salesWhatsapp = "5519996226692";
   const planMessages = {
-    PRO_MONTHLY: "Olá! Quero assinar o EditAE Pro Founder mensal (R$ 29,90/mês). Como faço para pagar pelo Asaas e ativar minha licença?",
-    PRO_ANNUAL: "Olá! Quero assinar o EditAE Pro Founder anual (R$ 249/ano). Como faço para pagar pelo Asaas e ativar minha licença?",
-    FOUNDER_LIFETIME: "Olá! Tenho interesse na licença EditAE Founder Lifetime (R$ 199). Ainda há licenças disponíveis? Como faço para comprar pelo Asaas?"
+    PRO_MONTHLY: "Olá! Tenho interesse em assinar o EditAE Pro Founder mensal (R$ 29,90/mês). Como posso contratar?",
+    PRO_ANNUAL: "Olá! Tenho interesse em assinar o EditAE Pro Founder anual (R$ 249/ano). Como posso contratar?",
+    FOUNDER_LIFETIME: "Olá! Tenho interesse no EditAE Founder Lifetime (R$ 199). Ainda há licenças disponíveis?"
   };
 
   function assistedSalesUrl(plan) {
