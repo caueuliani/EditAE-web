@@ -128,6 +128,8 @@
       couponsPanel.hidden = true;
       salesPanel.hidden = true;
       trialsPanel.hidden = true;
+      $("trial-created").hidden = true;
+      $("trial-created-code").textContent = "";
       setStatus(connectionStatus, error.message, "error");
     }
   });
