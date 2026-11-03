@@ -120,6 +120,32 @@
       <div id="sales-status" class="admin-status" role="status"></div>
       <div id="sales-result" class="admin-status" hidden></div>
     </section>
+    <section class="admin-card" id="trials-panel" hidden>
+      <div class="admin-heading">
+        <div><span class="eyebrow">BETA TESTERS</span><h2>Licenças temporárias</h2></div>
+        <button id="refresh-trials" class="button button-secondary compact" type="button">Atualizar</button>
+      </div>
+      <p class="admin-note">Convites Pro de 7 ou 15 dias para 1 PC. O prazo começa na primeira ativação pelo aplicativo, sem Asaas ou renovação. O código só é exibido na criação. Convites não resgatados vencem em 30 dias.</p>
+      <form id="trial-form" class="admin-form admin-grid">
+        <label>Duração do teste
+          <select id="trial-days"><option value="7">7 dias</option><option value="15">15 dias</option></select>
+        </label>
+        <label>E-mail do testador (opcional, recomendado)
+          <input id="trial-email" type="email" maxlength="254" placeholder="testador@exemplo.com" autocomplete="off" />
+        </label>
+        <label>Identificação interna
+          <input id="trial-note" maxlength="200" placeholder="Ex.: João — teste de cortes" />
+        </label>
+        <div class="admin-actions admin-save"><button class="button" type="submit">Gerar convite de teste</button></div>
+      </form>
+      <div id="trial-status" class="admin-status" role="status"></div>
+      <div id="trial-created" class="admin-status" hidden>
+        <strong>Copie e envie o código agora: ele não será exibido novamente.</strong>
+        <code id="trial-created-code"></code>
+        <button id="trial-copy" type="button" class="button button-secondary compact">Copiar código</button>
+      </div>
+      <div class="coupon-list" id="trial-list"></div>
+    </section>
     <section class="admin-card" id="coupons-panel" hidden>
       <div class="admin-heading">
         <div>
