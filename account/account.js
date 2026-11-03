@@ -280,6 +280,40 @@
       loading.hidden = true;
       content.hidden = false;
 
+      document.getElementById("trial-redeem-form").addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const status = document.getElementById("trial-redeem-status");
+        const codeInput = document.getElementById("trial-redeem-code");
+        const code = codeInput.value.trim().toUpperCase();
+        const submit = event.currentTarget.querySelector('button[type="submit"]');
+        submit.disabled = true;
+        status.textContent = "Validando convite…";
+        try {
+          const { data: updatedSession } = await currentClient.auth.getSession();
+          if (!updatedSession.session) throw new Error("Sua sessão expirou. Entre novamente.");
+          const response = await fetch(apiBase() + "/api/account/trial/redeem", {
+            method: "POST",
+            headers: {
+              "Authorization": "Bearer " + updatedSession.session.access_token,
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ code })
+          });
+          if (!response.ok) {
+            let detail = null;
+            try { detail = await response.json(); } catch {}
+            throw new Error(detail?.message || "Convite inválido ou indisponível (HTTP " + response.status + ").");
+          }
+          const data = await response.json();
+          codeInput.value = "";
+          status.textContent = "Convite de " + data.days +
+            " dias vinculado! Abra o EditAE no PC e clique em Sincronizar licença para iniciar seu teste.";
+          await loadCommercialAccount(updatedSession.session);
+        } catch (error) {
+          status.textContent = error.message || "Não foi possível resgatar o convite.";
+        } finally { submit.disabled = false; }
+      });
+
       try {
         await loadCommercialAccount(sessionData.session);
       } catch (error) {
