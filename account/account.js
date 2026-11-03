@@ -230,7 +230,10 @@
 
     if (account.license) {
       const paidUntil = dateLabel(account.license.paid_until);
+      const pendingTrial = account.license.entitlement === "PRO_ANNUAL" &&
+        account.license.paid_until == null && account.plan === "PRO_ANNUAL";
       document.getElementById("account-license").textContent =
+        pendingTrial ? "Teste Pro — aguardando primeiro PC" :
         account.license.active ? "Ativa" + (paidUntil ? " até " + paidUntil : "") : "Inativa";
       document.getElementById("account-devices").textContent =
         String(account.license.devices_active || 0) + " / " + String(account.license.max_devices || 2) + " ativos";
