@@ -7,6 +7,7 @@
   const panel = $("commercial-panel");
   const couponsPanel = $("coupons-panel");
   const salesPanel = $("sales-panel");
+  const trialsPanel = $("trials-panel");
   const connectionStatus = $("connection-status");
   const saveStatus = $("save-status");
 
@@ -104,6 +105,9 @@
     panel.hidden = false;
     couponsPanel.hidden = false;
     salesPanel.hidden = false;
+    trialsPanel.hidden = false;
+    try { await loadTrials(); }
+    catch (error) { setStatus($("trial-status"), error.message, "error"); }
     try { await loadCoupons(); }
     catch (error) { setStatus($("coupon-status"), error.message, "error"); }
     setStatus(connectionStatus, "Conectado ao EditAE.Server.", "ok");
@@ -123,6 +127,7 @@
       panel.hidden = true;
       couponsPanel.hidden = true;
       salesPanel.hidden = true;
+      trialsPanel.hidden = true;
       setStatus(connectionStatus, error.message, "error");
     }
   });
@@ -183,6 +188,108 @@
     } catch (error) {
       setStatus($("sales-status"), error.message, "error");
     }
+  });
+
+
+  function trialStatus(t) {
+    const now = Date.now() / 1000;
+    if (t.revoked_at ?? t.revokedAt) return "Revogado";
+    if ((t.activated_at ?? t.activatedAt) && (t.paid_until ?? t.paidUntil) <= now) return "Expirado";
+    if (t.activated_at ?? t.activatedAt) return "Ativo";
+    if (t.redeemed_at ?? t.redeemedAt) return "Resgatado — aguardando primeiro PC";
+    if ((t.invite_expires_at ?? t.inviteExpiresAt) <= now) return "Convite expirado";
+    return "Aguardando resgate";
+  }
+
+  function trialDate(unix) {
+    return unix ? new Date(unix * 1000).toLocaleString("pt-BR") : "—";
+  }
+
+  async function loadTrials() {
+    const list = $("trial-list");
+    list.replaceChildren();
+    const records = await request("/api/admin/trials");
+    if (!records.length) { list.textContent = "Nenhum convite criado."; return; }
+    for (const t of records) {
+      const id = t.id;
+      const revoked = t.revoked_at ?? t.revokedAt;
+      const detail = document.createElement("div");
+      const title = document.createElement("strong");
+      title.textContent = (t.email || t.note || "Teste sem destinatário") + " • " + trialStatus(t);
+      const summary = document.createElement("small");
+      summary.textContent = t.days + " dias • 1 PC • " +
+        (t.note || "Sem identificação") + " • Criado: " + trialDate(t.created_at ?? t.createdAt) +
+        " • Resgate: " + trialDate(t.redeemed_at ?? t.redeemedAt) +
+        " • Primeiro PC: " + trialDate(t.activated_at ?? t.activatedAt) +
+        " • Expiração Pro: " + trialDate(t.paid_until ?? t.paidUntil);
+      detail.append(title, summary);
+      const item = document.createElement("div");
+      item.className = "coupon-item";
+      const actions = document.createElement("div");
+      actions.className = "admin-actions";
+      if (!revoked) {
+        if ((t.devices_active ?? t.devicesActive) > 0) {
+          const release = document.createElement("button");
+          release.type = "button"; release.className = "button button-secondary compact";
+          release.textContent = "Liberar PC";
+          release.addEventListener("click", async () => {
+            if (!confirm("Liberar o PC da licença temporária? O prazo original continuará correndo.")) return;
+            release.disabled = true;
+            try {
+              await request("/api/admin/trials/" + encodeURIComponent(id) + "/release-device", { method: "POST" });
+              await loadTrials();
+              setStatus($("trial-status"), "Dispositivo liberado.", "ok");
+            } catch (err) { setStatus($("trial-status"), err.message, "error"); release.disabled = false; }
+          });
+          actions.append(release);
+        }
+        const revoke = document.createElement("button");
+        revoke.type = "button"; revoke.className = "button button-secondary compact";
+        revoke.textContent = "Revogar";
+        revoke.addEventListener("click", async () => {
+          if (!confirm("Revogar permanentemente este convite e a licença de teste?")) return;
+          revoke.disabled = true;
+          try {
+            await request("/api/admin/trials/" + encodeURIComponent(id) + "/revoke", { method: "POST" });
+            await loadTrials();
+            setStatus($("trial-status"), "Licença/convite revogado.", "ok");
+          } catch (err) { setStatus($("trial-status"), err.message, "error"); revoke.disabled = false; }
+        });
+        actions.append(revoke);
+      }
+      item.append(detail, actions);
+      list.append(item);
+    }
+  }
+
+  $("trial-form").addEventListener("submit", async (event) => {
+    event.preventDefault();
+    $("trial-created").hidden = true;
+    setStatus($("trial-status"), "Gerando convite…");
+    try {
+      const result = await request("/api/admin/trials", {
+        method: "POST",
+        body: JSON.stringify({
+          days: Number($("trial-days").value),
+          email: $("trial-email").value.trim() || null,
+          note: $("trial-note").value.trim() || null
+        })
+      });
+      $("trial-created-code").textContent = result.code;
+      $("trial-created").hidden = false;
+      setStatus($("trial-status"), "Convite criado. Envie o código ao testador para resgatar em Minha conta.", "ok");
+      await loadTrials();
+    } catch (err) { setStatus($("trial-status"), err.message, "error"); }
+  });
+  $("trial-copy").addEventListener("click", async () => {
+    try {
+      await navigator.clipboard.writeText($("trial-created-code").textContent);
+      setStatus($("trial-status"), "Código copiado.", "ok");
+    } catch { setStatus($("trial-status"), "Copie o código exibido manualmente.", "error"); }
+  });
+  $("refresh-trials").addEventListener("click", async () => {
+    try { await loadTrials(); setStatus($("trial-status"), "Lista atualizada.", "ok"); }
+    catch (err) { setStatus($("trial-status"), err.message, "error"); }
   });
 
   function couponSummary(coupon) {
