@@ -51,6 +51,16 @@
 
         <p id="account-server-status" class="portal-muted">Consultando sua conta comercial no EditAE.Server…</p>
 
+        <section class="portal-card" aria-label="Resgatar convite de teste">
+          <h2>Convite de teste Pro</h2>
+          <p class="portal-muted">Recebeu um código de teste? Resgate aqui. Seu prazo de 7 ou 15 dias começa na primeira ativação pelo EditAE no PC.</p>
+          <form id="trial-redeem-form" class="admin-form">
+            <label for="trial-redeem-code">Código do convite</label>
+            <input id="trial-redeem-code" type="text" maxlength="80" placeholder="EA-TEST-XXXXXXXX-XXXXXXXX-XXXXXXXX-XXXXXXXX" autocomplete="off" required />
+            <button class="button" type="submit">Ativar convite na conta</button>
+          </form>
+          <p id="trial-redeem-status" class="portal-muted" role="status"></p>
+        </section>
         <div class="portal-actions">
           <a class="button button-secondary" href="../">Voltar ao EditAE</a>
           <button class="button" id="logout" type="button">Sair</button>
