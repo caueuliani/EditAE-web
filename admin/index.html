@@ -42,7 +42,35 @@
       <div id="connection-status" class="admin-status">Não conectado.</div>
     </section>
 
-    <section class="admin-card" id="commercial-panel" hidden>
+
+    <nav id="admin-tabs" class="admin-tabs" aria-label="Seções do painel administrativo" hidden>
+      <button type="button" class="admin-tab" id="tab-dashboard" role="tab" aria-controls="dashboard-panel" aria-selected="true" data-tab="dashboard">Visão geral</button>
+      <button type="button" class="admin-tab" id="tab-commercial" role="tab" aria-controls="commercial-panel" aria-selected="false" data-tab="commercial">Operação do site</button>
+      <button type="button" class="admin-tab" id="tab-sales" role="tab" aria-controls="sales-panel" aria-selected="false" data-tab="sales">Vendas assistidas</button>
+      <button type="button" class="admin-tab" id="tab-trials" role="tab" aria-controls="trials-panel" aria-selected="false" data-tab="trials">Testadores</button>
+      <button type="button" class="admin-tab" id="tab-coupons" role="tab" aria-controls="coupons-panel" aria-selected="false" data-tab="coupons">Cupons</button>
+    </nav>
+    <section class="admin-card" id="dashboard-panel" role="tabpanel" aria-labelledby="tab-dashboard" hidden>
+      <div class="admin-heading">
+        <div><span class="eyebrow">EDITAE ANALYTICS</span><h2>Visão geral</h2></div>
+        <button id="refresh-dashboard" class="button button-secondary compact" type="button">Atualizar dados</button>
+      </div>
+      <p class="admin-note">Dados comerciais do EditAE Server e downloads públicos dos instaladores no GitHub. Não inclui visitas, instalações únicas nem receita líquida da Asaas.</p>
+      <div id="dashboard-status" class="admin-status" role="status"></div>
+      <div class="analytics-grid" id="analytics-grid" aria-live="polite"></div>
+      <div class="analytics-subsection">
+        <h3>Downloads por versão</h3>
+        <p class="admin-note">Contagem por arquivo publicada pelo GitHub. Reinstalações, downloads seus e versões com assets substituídos podem distorcer o histórico.</p>
+        <div id="downloads-list" class="analytics-list"></div>
+        <div id="downloads-status" class="admin-status"></div>
+      </div>
+      <div class="analytics-subsection">
+        <h3>Limitações dos dados</h3>
+        <p class="admin-note" id="analytics-limits">Ainda não medimos instalações únicas, usuários ativos, vídeos processados nem todas as contas Supabase.</p>
+      </div>
+    </section>
+
+    <section class="admin-card" id="commercial-panel" role="tabpanel" aria-labelledby="tab-commercial" hidden>
       <div class="admin-heading">
         <div>
           <span class="eyebrow">ESTADO COMERCIAL</span>
@@ -108,7 +136,7 @@
 
       <div id="save-status" class="admin-status"></div>
     </section>
-    <section class="admin-card" id="sales-panel" hidden>
+    <section class="admin-card" id="sales-panel" role="tabpanel" aria-labelledby="tab-sales" hidden>
       <div class="admin-heading"><div><span class="eyebrow">ATENDIMENTO ASSISTIDO</span><h2>Validar código do WhatsApp</h2></div></div>
       <p class="admin-note">O código expira em 30 minutos e só pode ser validado uma vez. A consulta vincula o pedido à conta autenticada, mas não confirma pagamento nem concede licença.</p>
       <form id="sales-form" class="admin-form">
@@ -120,7 +148,7 @@
       <div id="sales-status" class="admin-status" role="status"></div>
       <div id="sales-result" class="admin-status" hidden></div>
     </section>
-    <section class="admin-card" id="trials-panel" hidden>
+    <section class="admin-card" id="trials-panel" role="tabpanel" aria-labelledby="tab-trials" hidden>
       <div class="admin-heading">
         <div><span class="eyebrow">BETA TESTERS</span><h2>Licenças temporárias</h2></div>
         <button id="refresh-trials" class="button button-secondary compact" type="button">Atualizar</button>
@@ -146,7 +174,7 @@
       </div>
       <div class="coupon-list" id="trial-list"></div>
     </section>
-    <section class="admin-card" id="coupons-panel" hidden>
+    <section class="admin-card" id="coupons-panel" role="tabpanel" aria-labelledby="tab-coupons" hidden>
       <div class="admin-heading">
         <div>
           <span class="eyebrow">PROMOÇÕES</span>
