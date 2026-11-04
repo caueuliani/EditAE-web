@@ -116,6 +116,25 @@
     }
   }
 
+  async function loadSignups() {
+    const status = $("signup-status");
+    const metrics = $("signup-metrics");
+    status.textContent = "Consultando cadastros do Supabase…";
+    metrics.replaceChildren();
+    try {
+      const data = await request("/api/admin/analytics/registrations");
+      metrics.replaceChildren(
+        card("Contas cadastradas", formatNumber(data.total_accounts), "Total atual no Supabase Auth"),
+        card("Novas nos últimos 7 dias", formatNumber(data.created_last_7_days), "Contas criadas"),
+        card("Novas nos últimos 30 dias", formatNumber(data.created_last_30_days), "Contas criadas")
+      );
+      status.textContent = data.limitations;
+    } catch (error) {
+      status.textContent = "Cadastros indisponíveis: " + error.message +
+        " (verifique acesso de leitura a auth.users).";
+    }
+  }
+
   async function loadDownloadClicks() {
     const status = $("download-click-status");
     const metrics = $("download-click-metrics");
@@ -167,7 +186,7 @@
 
   async function refreshDashboard() {
     if (!connected) return;
-    await Promise.all([loadAnalytics(), loadDownloads(), loadDownloadClicks()]);
+    await Promise.all([loadAnalytics(), loadDownloads(), loadDownloadClicks(), loadSignups()]);
   }
 
   $("refresh-dashboard").addEventListener("click", () => void refreshDashboard());
