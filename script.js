@@ -34,6 +34,8 @@
 
   if (elements.year) elements.year.textContent = String(new Date().getFullYear());
 
+  const checkoutPlans = new Set(["PRO_MONTHLY", "PRO_ANNUAL", "FOUNDER_LIFETIME"]);
+  const pendingCheckoutKey = "editae_pending_checkout_plan";
   let activeConfig = fallbackConfig;
   let countdownTimer = null;
 
@@ -354,15 +356,18 @@
     link.textContent = "Abrindo checkout…";
 
     try {
-      const session = window.EditAEAuth?.configured ? await window.EditAEAuth.session() : null;
-      if (window.EditAEAuth?.configured && !session) {
+      // Never start an anonymous checkout even if authentication configuration is absent.
+      if (!window.EditAEAuth?.configured) {
+        throw new Error("auth_not_configured");
+      }
+      const session = await window.EditAEAuth.session();
+      if (!session?.access_token) {
+        if (checkoutPlans.has(plan)) sessionStorage.setItem(pendingCheckoutKey, plan);
         setStatus("Entre para continuar", "Faça login ou crie sua conta EditAE antes de iniciar a compra.");
         window.location.assign("./auth/");
         return;
       }
-      const headers = session?.access_token
-        ? { "Authorization": "Bearer " + session.access_token }
-        : {};
+      const headers = { "Authorization": "Bearer " + session.access_token };
       const couponCode = checkoutCouponCode(plan);
       const result = await fetchJson(apiBaseUrl + "/api/checkout", {
         method: "POST",
@@ -420,6 +425,24 @@
   }
 
   render(fallbackConfig);
-  loadCommercialConfig().then(render);
+  loadCommercialConfig().then(async (config) => {
+    render(config);
+    // The login page stores only an allowlisted product ID in sessionStorage.
+    // Consume it exactly once; never store tokens, emails or external URLs.
+    const pending = sessionStorage.getItem(pendingCheckoutKey);
+    if (!pending) return;
+    sessionStorage.removeItem(pendingCheckoutKey);
+    if (!checkoutPlans.has(pending) || config.mode !== "automatic" || !apiBaseUrl ||
+        !window.EditAEAuth?.configured) return;
+    try {
+      const session = await window.EditAEAuth.session();
+      if (!session?.access_token) return;
+      const link = document.querySelector('[data-checkout-plan="' + pending + '"]');
+      if (link && link.getAttribute("aria-disabled") !== "true")
+        await startAutomaticCheckout(pending, link);
+    } catch (error) {
+      console.warn("Não foi possível retomar checkout após o login.", error);
+    }
+  });
   renderAccountNav();
 })();

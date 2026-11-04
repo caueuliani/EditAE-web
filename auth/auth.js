@@ -8,6 +8,13 @@
   const tabSignup = $("tab-signup");
   const notConfigured = $("not-configured");
 
+  const pendingCheckoutKey = "editae_pending_checkout_plan";
+  const allowedPlans = new Set(["PRO_MONTHLY", "PRO_ANNUAL", "FOUNDER_LIFETIME"]);
+  function afterLogin() {
+    const pending = sessionStorage.getItem(pendingCheckoutKey);
+    return pending && allowedPlans.has(pending) ? "../" : "../account/";
+  }
+
   function setStatus(message, kind="") {
     status.textContent = message;
     status.className = "portal-status" + (kind ? " " + kind : "");
@@ -44,7 +51,7 @@
         password: $("login-password").value
       });
       if (error) throw error;
-      window.location.href = "../account/";
+      window.location.href = afterLogin();
     } catch (error) {
       setStatus(error.message || "Não foi possível entrar.", "error");
     }
@@ -73,7 +80,7 @@
       if (error) throw error;
 
       if (data.session) {
-        window.location.href = "../account/";
+        window.location.href = afterLogin();
       } else {
         setStatus("Conta criada. Confira seu e-mail para confirmar o cadastro.", "ok");
       }
@@ -83,6 +90,6 @@
   });
 
   window.EditAEAuth.session().then((session) => {
-    if (session) window.location.href = "../account/";
+    if (session) window.location.href = afterLogin();
   }).catch(() => {});
 })();
