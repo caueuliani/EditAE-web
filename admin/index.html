@@ -55,9 +55,14 @@
         <div><span class="eyebrow">EDITAE ANALYTICS</span><h2>Visão geral</h2></div>
         <button id="refresh-dashboard" class="button button-secondary compact" type="button">Atualizar dados</button>
       </div>
-      <p class="admin-note">Dados comerciais do EditAE Server e downloads públicos dos instaladores no GitHub. Não inclui visitas, instalações únicas nem receita líquida da Asaas.</p>
+      <p class="admin-note">Indicadores de produção separados dos testes do Sandbox. Valores do banco são estimativas: confira os recebimentos no painel Asaas antes de considerá-los faturamento realizado.</p>
       <div id="dashboard-status" class="admin-status" role="status"></div>
       <div class="analytics-grid" id="analytics-grid" aria-live="polite"></div>
+      <div class="analytics-subsection">
+        <h3>Testes e registros sem origem comprovada</h3>
+        <p class="admin-note">Estes valores não entram nos indicadores de produção acima. Registros históricos sem URL de checkout confiável não são considerados vendas reais.</p>
+        <div id="payment-origin-breakdown" class="analytics-list"></div>
+      </div>
       <div class="analytics-subsection">
         <h3>Downloads por versão</h3>
         <p class="admin-note">Contagem por arquivo publicada pelo GitHub. Reinstalações, downloads seus e versões com assets substituídos podem distorcer o histórico.</p>
