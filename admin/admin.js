@@ -116,6 +116,24 @@
     }
   }
 
+  async function loadDownloadClicks() {
+    const status = $("download-click-status");
+    const metrics = $("download-click-metrics");
+    status.textContent = "Consultando cliques de download…";
+    metrics.replaceChildren();
+    try {
+      const data = await request("/api/admin/analytics/download-clicks");
+      metrics.replaceChildren(
+        card("Cliques registrados", formatNumber(data.total_clicks), "Desde a instalação da telemetria"),
+        card("Últimos 7 dias", formatNumber(data.last_7_days), "Tentativas de clique no site"),
+        card("Últimos 30 dias", formatNumber(data.last_30_days), "Não são visitantes únicos")
+      );
+      status.textContent = data.limitations;
+    } catch (error) {
+      status.textContent = "Cliques indisponíveis: " + error.message;
+    }
+  }
+
   async function loadDownloads() {
     const status = $("downloads-status");
     status.textContent = "Consultando downloads do GitHub…";
@@ -149,7 +167,7 @@
 
   async function refreshDashboard() {
     if (!connected) return;
-    await Promise.all([loadAnalytics(), loadDownloads()]);
+    await Promise.all([loadAnalytics(), loadDownloads(), loadDownloadClicks()]);
   }
 
   $("refresh-dashboard").addEventListener("click", () => void refreshDashboard());
