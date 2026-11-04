@@ -11,6 +11,127 @@
   const connectionStatus = $("connection-status");
   const saveStatus = $("save-status");
 
+
+  const dashboardPanel = $("dashboard-panel");
+  const tabsNav = $("admin-tabs");
+  const sections = {
+    dashboard: dashboardPanel, commercial: panel,
+    sales: salesPanel, trials: trialsPanel, coupons: couponsPanel
+  };
+  let currentTab = "dashboard";
+  let connected = false;
+
+  function chooseTab(name) {
+    if (!connected || !Object.hasOwn(sections, name)) return;
+    currentTab = name;
+    for (const [key, section] of Object.entries(sections)) {
+      section.hidden = key !== name;
+    }
+    for (const button of tabsNav.querySelectorAll("[data-tab]")) {
+      button.setAttribute("aria-selected", String(button.dataset.tab === name));
+      button.tabIndex = button.dataset.tab === name ? 0 : -1;
+    }
+  }
+  for (const button of tabsNav.querySelectorAll("[data-tab]")) {
+    button.addEventListener("click", () => chooseTab(button.dataset.tab));
+    button.addEventListener("keydown", (event) => {
+      if (!["ArrowRight", "ArrowLeft", "Home", "End"].includes(event.key)) return;
+      event.preventDefault();
+      const buttons = Array.from(tabsNav.querySelectorAll("[data-tab]"));
+      const pos = buttons.indexOf(button);
+      const next = event.key === "Home" ? 0 : event.key === "End" ? buttons.length - 1 :
+        (pos + (event.key === "ArrowRight" ? 1 : -1) + buttons.length) % buttons.length;
+      buttons[next].focus();
+      chooseTab(buttons[next].dataset.tab);
+    });
+  }
+
+  function disconnectPanels() {
+    connected = false;
+    tabsNav.hidden = true;
+    for (const section of Object.values(sections)) section.hidden = true;
+  }
+
+  const formatNumber = (number) => new Intl.NumberFormat("pt-BR").format(number);
+  const formatMoney = (cents) => new Intl.NumberFormat("pt-BR", {
+    style: "currency", currency: "BRL"
+  }).format(Number(cents) / 100);
+
+  function card(label, value, note) {
+    const item = document.createElement("div");
+    item.className = "analytics-metric";
+    const caption = document.createElement("small");
+    caption.textContent = label;
+    const number = document.createElement("strong");
+    number.textContent = value;
+    const explanation = document.createElement("small");
+    explanation.textContent = note;
+    item.append(caption, number, explanation);
+    return item;
+  }
+
+  async function loadAnalytics() {
+    setStatus($("dashboard-status"), "Consultando dados comerciais…");
+    try {
+      const a = await request("/api/admin/analytics");
+      const grid = $("analytics-grid");
+      grid.replaceChildren(
+        card("Checkouts iniciados", formatNumber(a.checkouts_total), "Inclui tentativas e pedidos pendentes"),
+        card("Pedidos com pagamento aprovado", formatNumber(a.orders_with_approved_payment), "Somente registros confirmados no backend"),
+        card("Recebimentos aprovados", formatMoney(a.gross_approved_cents), "Bruto histórico, não saldo líquido"),
+        card("Assinaturas ativas", formatNumber(a.active_subscriptions), "Mensal: " + a.active_monthly + " · Anual: " + a.active_annual),
+        card("Receita recorrente estimada", formatMoney(a.mrr_cents), "MRR: mensal + anual / 12; exclui Lifetime"),
+        card("Founder com pagamento", formatNumber(a.founder_customers), "Compradores únicos"),
+        card("Licenças pagas ativas", formatNumber(a.active_paid_licenses), "Exclui licenças temporárias"),
+        card("Testes Pro ativos", formatNumber(a.trial_active), "Convites emitidos: " + a.trial_invitations),
+        card("Clientes de checkout", formatNumber(a.checkout_customers), "Com conta vinculada: " + a.checkout_customers_with_account)
+      );
+      $("analytics-limits").textContent = a.limitations + " Ainda não há contagem de instalações únicas, usuários ativos ou vídeos processados.";
+      setStatus($("dashboard-status"), "Dados comerciais atualizados em " + new Date(a.generated_at * 1000).toLocaleString("pt-BR") + ".", "ok");
+    } catch (error) {
+      $("analytics-grid").replaceChildren();
+      setStatus($("dashboard-status"), "Métricas indisponíveis: " + error.message, "error");
+    }
+  }
+
+  async function loadDownloads() {
+    const status = $("downloads-status");
+    status.textContent = "Consultando downloads do GitHub…";
+    const list = $("downloads-list");
+    list.replaceChildren();
+    try {
+      const response = await fetch("https://api.github.com/repos/caueuliani/EditAE-Downloads/releases?per_page=30",
+        { headers: { "Accept": "application/vnd.github+json" }, cache: "no-store" });
+      if (!response.ok) throw new Error("GitHub HTTP " + response.status);
+      const releases = await response.json();
+      let total = 0;
+      for (const release of releases) {
+        const installers = release.assets.filter(asset => asset.name === "EditAE-Setup.exe" ||
+          /^EditAE_[0-9]+\.[0-9]+\.[0-9]+_x64-setup\.exe$/i.test(asset.name));
+        const count = installers.reduce((sum, asset) => sum + asset.download_count, 0);
+        total += count;
+        const row = document.createElement("div");
+        row.className = "analytics-row";
+        const name = document.createElement("span");
+        name.textContent = release.tag_name;
+        const amount = document.createElement("strong");
+        amount.textContent = formatNumber(count) + " downloads";
+        row.append(name, amount);
+        list.append(row);
+      }
+      status.textContent = formatNumber(total) + " downloads de instaladores registrados nos assets atualmente disponíveis. Não representa pessoas únicas.";
+    } catch (error) {
+      status.textContent = "Downloads indisponíveis no momento: " + error.message;
+    }
+  }
+
+  async function refreshDashboard() {
+    if (!connected) return;
+    await Promise.all([loadAnalytics(), loadDownloads()]);
+  }
+
+  $("refresh-dashboard").addEventListener("click", () => void refreshDashboard());
+
   let apiBase = localStorage.getItem("editae_admin_api_base") || "";
   let token = "";
 
@@ -102,10 +223,10 @@
     setStatus(connectionStatus, "Conectando…");
     const config = await request("/api/admin/config");
     populate(config);
-    panel.hidden = false;
-    couponsPanel.hidden = false;
-    salesPanel.hidden = false;
-    trialsPanel.hidden = false;
+    connected = true;
+    tabsNav.hidden = false;
+    chooseTab(currentTab);
+    void refreshDashboard();
     try { await loadTrials(); }
     catch (error) { setStatus($("trial-status"), error.message, "error"); }
     try { await loadCoupons(); }
@@ -124,10 +245,7 @@
       $("admin-token").value = "";
     } catch (error) {
       token = "";
-      panel.hidden = true;
-      couponsPanel.hidden = true;
-      salesPanel.hidden = true;
-      trialsPanel.hidden = true;
+      disconnectPanels();
       $("trial-created").hidden = true;
       $("trial-created-code").textContent = "";
       setStatus(connectionStatus, error.message, "error");
@@ -136,9 +254,7 @@
 
   $("disconnect").addEventListener("click", () => {
     token = "";
-    panel.hidden = true;
-    couponsPanel.hidden = true;
-    salesPanel.hidden = true;
+    disconnectPanels();
     $("admin-token").value = "";
     setStatus(connectionStatus, "Desconectado.");
   });
