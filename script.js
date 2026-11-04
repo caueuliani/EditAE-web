@@ -404,6 +404,19 @@
       return;
     }
 
+    // Counts click attempts only; never blocks the original GitHub download link.
+    // No user ID, cookie, file name, fingerprint or browser metadata is sent.
+    const download = event.target.closest("[data-download-link]");
+    if (download && download.getAttribute("aria-disabled") !== "true" &&
+        download.href && download.href !== "#" && apiBaseUrl &&
+        (event.button === 0 || event.detail === 0)) {
+      try {
+        void fetch(apiBaseUrl + "/api/public/telemetry/download-click", {
+          method: "POST", mode: "cors", keepalive: true, cache: "no-store"
+        }).catch(() => {});
+      } catch { /* Telemetry must never break download navigation. */ }
+    }
+
     const checkout = event.target.closest("[data-checkout-plan]");
     if (!checkout || activeConfig.mode !== "automatic") return;
     event.preventDefault();
