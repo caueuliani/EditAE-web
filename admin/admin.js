@@ -74,22 +74,44 @@
     setStatus($("dashboard-status"), "Consultando dados comerciais…");
     try {
       const a = await request("/api/admin/analytics");
+      // Fail closed if an old server does not provide per-environment data.
+      if (!a.production || !a.sandbox || !a.unknown) {
+        throw new Error("Atualize o EditAE Server antes de consultar o faturamento por ambiente.");
+      }
       const grid = $("analytics-grid");
+      const p = a.production;
       grid.replaceChildren(
-        card("Checkouts iniciados", formatNumber(a.checkouts_total), "Inclui tentativas e pedidos pendentes"),
-        card("Pedidos com pagamento aprovado", formatNumber(a.orders_with_approved_payment), "Somente registros confirmados no backend"),
-        card("Recebimentos aprovados", formatMoney(a.gross_approved_cents), "Bruto histórico, não saldo líquido"),
-        card("Assinaturas ativas", formatNumber(a.active_subscriptions), "Mensal: " + a.active_monthly + " · Anual: " + a.active_annual),
-        card("Receita recorrente estimada", formatMoney(a.mrr_cents), "MRR: mensal + anual / 12; exclui Lifetime"),
-        card("Founder com pagamento", formatNumber(a.founder_customers), "Compradores únicos"),
-        card("Licenças pagas ativas", formatNumber(a.active_paid_licenses), "Exclui licenças temporárias"),
+        card("Checkouts — produção", formatNumber(p.checkouts_total), "Pedidos iniciados no Asaas real"),
+        card("Pagamentos aprovados — produção", formatNumber(p.orders_with_approved_payment), "Registros aprovados e aplicados; concilie com Asaas"),
+        card("Recebimentos — produção", formatMoney(p.gross_approved_cents), "Estimativa bruta registrada; não é saldo Asaas"),
+        card("Assinaturas — produção", formatNumber(p.active_subscriptions), "Mensal: " + p.active_monthly + " · Anual: " + p.active_annual),
+        card("MRR — produção", formatMoney(p.mrr_cents), "Projeção mensal; exclui Lifetime"),
+        card("Founder — produção", formatNumber(p.founder_customers), "Compradores com pagamento registrado"),
+        card("Licenças pagas — produção", formatNumber(p.active_paid_licenses), "Exclui convites temporários"),
         card("Testes Pro ativos", formatNumber(a.trial_active), "Convites emitidos: " + a.trial_invitations),
-        card("Clientes de checkout", formatNumber(a.checkout_customers), "Com conta vinculada: " + a.checkout_customers_with_account)
+        card("Clientes de checkout (todos os ambientes)", formatNumber(a.checkout_customers), "Com conta vinculada: " + a.checkout_customers_with_account)
       );
-      $("analytics-limits").textContent = a.limitations + " Ainda não há contagem de instalações únicas, usuários ativos ou vídeos processados.";
-      setStatus($("dashboard-status"), "Dados comerciais atualizados em " + new Date(a.generated_at * 1000).toLocaleString("pt-BR") + ".", "ok");
+      const detail = $("payment-origin-breakdown");
+      detail.replaceChildren();
+      for (const [name, source] of [["Sandbox / testes", a.sandbox], ["Origem não identificada", a.unknown]]) {
+        const section = document.createElement("div");
+        section.className = "analytics-row";
+        const label = document.createElement("span");
+        label.textContent = name + " · " + formatNumber(source.checkouts_total) + " checkouts · " +
+          formatNumber(source.orders_with_approved_payment) + " pedidos aprovados · " +
+          formatNumber(source.active_subscriptions) + " assinaturas";
+        const amount = document.createElement("strong");
+        amount.textContent = formatMoney(source.gross_approved_cents) + " (não é receita confirmada de produção)";
+        section.append(label, amount);
+        detail.append(section);
+      }
+      $("analytics-limits").textContent = a.limitations +
+        " Ainda não há contagem de instalações únicas, usuários ativos ou vídeos processados.";
+      setStatus($("dashboard-status"), "Dados por ambiente atualizados em " +
+        new Date(a.generated_at * 1000).toLocaleString("pt-BR") + ".", "ok");
     } catch (error) {
       $("analytics-grid").replaceChildren();
+      $("payment-origin-breakdown").replaceChildren();
       setStatus($("dashboard-status"), "Métricas indisponíveis: " + error.message, "error");
     }
   }
