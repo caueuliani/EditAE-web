@@ -83,3 +83,13 @@
 .web-avatar-option img { width:54px; height:54px; border-radius:50%; }
 .web-avatar-option span { font-size:11px; }
 @media (max-width:620px) { .web-avatar-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+
+.account-devices-panel { border:1px solid var(--border); border-radius:10px; background:#14171c; padding:18px; margin:0 0 22px; }
+.account-devices-panel h2 { margin:0 0 8px; font-size:18px; }
+.account-device-list { display:grid; gap:10px; margin-top:14px; }
+.account-device-row { display:flex; align-items:center; justify-content:space-between; gap:12px; border:1px solid var(--border-strong); border-radius:8px; padding:12px; background:#111419; }
+.account-device-row > div { min-width:0; display:grid; gap:4px; }
+.account-device-row strong { font-size:14px; overflow-wrap:anywhere; }
+.account-device-row small { color:var(--muted); font-size:12px; overflow-wrap:anywhere; }
+.account-device-row button { flex-shrink:0; }
+@media (max-width:620px) { .account-device-row { align-items:stretch; flex-direction:column; } }
