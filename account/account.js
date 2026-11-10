@@ -206,6 +206,71 @@
     });
   }
 
+  function renderDevices(account) {
+    const root = document.getElementById("devices-list");
+    root.replaceChildren();
+    const devices = Array.isArray(account.devices) ? account.devices : [];
+    if (!account.license || devices.length === 0) {
+      const empty = document.createElement("p");
+      empty.className = "portal-muted";
+      empty.textContent = account.license ? "Nenhum computador vinculado." : "Nenhuma licença vinculada.";
+      root.append(empty);
+      return;
+    }
+    for (const device of devices) {
+      if (typeof device.device_id !== "string" || !/^[a-f0-9]{32}$/i.test(device.device_id)) continue;
+      const row = document.createElement("div");
+      row.className = "account-device-row";
+      const details = document.createElement("div");
+      const title = document.createElement("strong");
+      title.textContent = "PC ••••" + device.device_id.slice(-6).toUpperCase();
+      const description = document.createElement("small");
+      const lastSeen = dateLabel(device.last_seen_at);
+      description.textContent = "EditAe " + (device.app_version || "versão desconhecida") +
+        (lastSeen ? " · Última atividade: " + lastSeen : "");
+      details.append(title, description);
+      const remove = document.createElement("button");
+      remove.type = "button";
+      remove.className = "button button-secondary compact";
+      remove.textContent = "Desativar";
+      remove.setAttribute("aria-label", "Desativar " + title.textContent);
+      remove.addEventListener("click", async () => {
+        if (!window.confirm("Desativar " + title.textContent + "? A vaga ficará livre para outro computador. O PC antigo perderá acesso Pro quando a licença for revalidada (o acesso offline ainda pode durar até 7 dias).")) return;
+        const status = document.getElementById("devices-status");
+        remove.disabled = true;
+        status.classList.remove("error", "ok");
+        status.textContent = "Desativando dispositivo…";
+        try {
+          const { data, error } = await currentClient.auth.getSession();
+          if (error || !data.session) throw new Error("Sua sessão expirou. Entre novamente.");
+          const response = await fetch(apiBase() + "/api/account/devices/deactivate", {
+            method: "POST",
+            headers: {
+              "Authorization": "Bearer " + data.session.access_token,
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ device_id: device.device_id })
+          });
+          if (!response.ok) {
+            let detail = null;
+            try { detail = await response.json(); } catch {}
+            throw new Error(detail?.message || "Não foi possível desativar o dispositivo (HTTP " + response.status + ").");
+          }
+          await loadCommercialAccount(data.session);
+          status.classList.add("ok");
+          status.textContent = "Dispositivo desativado. Uma vaga foi liberada; sincronize a licença no novo PC.";
+        } catch (error) {
+          status.classList.add("error");
+          status.textContent = error.message || "Não foi possível desativar o dispositivo.";
+        } finally {
+          remove.disabled = false;
+        }
+      });
+      row.append(details, remove);
+      root.append(row);
+    }
+  }
+
   async function loadCommercialAccount(session) {
     const base = apiBase();
     if (!base) {
@@ -225,6 +290,7 @@
     if (!response.ok) throw new Error("Não foi possível consultar sua conta comercial (HTTP " + response.status + ").");
 
     const account = await response.json();
+    renderDevices(account);
     document.getElementById("account-plan").textContent = planLabel(account.plan);
     avatarRoot.classList.toggle("pro", account.plan && account.plan !== "FREE");
 
